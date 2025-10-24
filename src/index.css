@@ -2,105 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here.
-All colors MUST be HSL.
-*/
-
+/* Design system (HSL only) — Bolsa Família theme (gov-style) */
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 210 20% 15%;
+    --foreground: 215 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 20% 15%;
+    --card-foreground: 215 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 15%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 210 100% 45%;
+    /* Core palette (gov vibe) */
+    --primary: 137 66% 35%;           /* Verde principal */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 55%;
+    --primary-glow: 137 66% 42%;
 
-    --secondary: 150 60% 45%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 49 97% 52%;          /* Amarelo destaque */
+    --secondary-foreground: 24 100% 12%;
 
     --muted: 210 40% 96%;
-    --muted-foreground: 210 15% 50%;
+    --muted-foreground: 215 12% 45%;
 
-    --accent: 150 60% 50%;
+    --accent: 221 83% 39%;            /* Azul institucional */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 4 90% 58%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 210 30% 90%;
     --input: 210 30% 90%;
-    --ring: 210 100% 45%;
+    --ring: 137 66% 35%;
 
     --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 45%), hsl(210 100% 55%));
-    --gradient-secondary: linear-gradient(135deg, hsl(150 60% 45%), hsl(150 60% 55%));
-    --gradient-hero: linear-gradient(180deg, hsl(210 100% 98%), hsl(0 0% 100%));
-    
-    --shadow-soft: 0 4px 20px -2px hsl(210 100% 45% / 0.15);
-    --shadow-strong: 0 10px 40px -5px hsl(210 100% 45% / 0.25);
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(137 66% 35%), hsl(137 66% 42%));
+    --gradient-secondary: linear-gradient(135deg, hsl(49 97% 52%), hsl(49 90% 60%));
+    --gradient-hero: linear-gradient(180deg, hsl(137 66% 96%), hsl(0 0% 100%));
 
+    /* Shadows (tinted by primary) */
+    --shadow-soft: 0 4px 20px -2px hsl(137 66% 35% / 0.14);
+    --shadow-strong: 0 10px 40px -5px hsl(137 66% 35% / 0.24);
+
+    /* Sidebar (se usar algum layout lateral) */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 221 83% 39%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 221 83% 39%;
   }
 
   .dark {
-    --background: 210 25% 8%;
-    --foreground: 210 20% 95%;
+    --background: 215 25% 8%;
+    --foreground: 0 0% 98%;
 
-    --card: 210 25% 10%;
-    --card-foreground: 210 20% 95%;
+    --card: 215 25% 10%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 210 25% 10%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 215 25% 10%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 210 100% 55%;
+    --primary: 137 66% 42%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 65%;
+    --primary-glow: 137 66% 50%;
 
-    --secondary: 150 60% 50%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 49 97% 56%;
+    --secondary-foreground: 24 100% 12%;
 
-    --muted: 210 25% 15%;
-    --muted-foreground: 210 15% 65%;
+    --muted: 215 20% 16%;
+    --muted-foreground: 215 12% 70%;
 
-    --accent: 150 60% 55%;
+    --accent: 221 83% 46%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 50.6%;
+    --destructive: 4 85% 54%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 18%;
-    --input: 210 25% 18%;
-    --ring: 210 100% 55%;
+    --border: 215 20% 18%;
+    --input: 215 20% 18%;
+    --ring: 137 66% 42%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 55%), hsl(210 100% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(150 60% 50%), hsl(150 60% 60%));
-    --gradient-hero: linear-gradient(180deg, hsl(210 25% 12%), hsl(210 25% 8%));
+    --gradient-primary: linear-gradient(135deg, hsl(137 66% 42%), hsl(137 66% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(49 97% 56%), hsl(49 95% 64%));
+    --gradient-hero: linear-gradient(180deg, hsl(215 20% 12%), hsl(215 20% 8%));
 
-    --shadow-soft: 0 4px 20px -2px hsl(210 100% 55% / 0.2);
-    --shadow-strong: 0 10px 40px -5px hsl(210 100% 55% / 0.3);
+    --shadow-soft: 0 4px 20px -2px hsl(137 66% 42% / 0.2);
+    --shadow-strong: 0 10px 40px -5px hsl(137 66% 42% / 0.3);
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 215 20% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 221 83% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 215 20% 16%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 215 20% 16%;
+    --sidebar-ring: 221 83% 46%;
   }
 }
 
@@ -135,19 +136,15 @@ All colors MUST be HSL.
 
 /* 3) Utilitários que mapeiam tokens do design system */
 @layer utilities {
-  /* Sombras */
   .shadow-soft   { box-shadow: var(--shadow-soft); }
   .shadow-strong { box-shadow: var(--shadow-strong); }
 
-  /* Gradientes de fundo */
   .bg-gradient-primary   { background-image: var(--gradient-primary); }
   .bg-gradient-secondary { background-image: var(--gradient-secondary); }
   .bg-hero               { background-image: var(--gradient-hero); }
 
-  /* Raio padrão como utilitário */
   .rounded-system { border-radius: var(--radius); }
 
-  /* Cores semânticas (caso precise aplicar direto) */
   .text-muted-foreground { color: hsl(var(--muted-foreground)); }
   .bg-muted              { background-color: hsl(var(--muted)); }
   .border-border         { border-color: hsl(var(--border)); }
@@ -177,7 +174,7 @@ All colors MUST be HSL.
 @layer utilities {
   @media (max-width: 1023px) {
     .fab-anchor-safe {
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 88px); /* ajuste fino: 88–112px */
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
     }
   }
 }
@@ -190,7 +187,6 @@ All colors MUST be HSL.
   .ad-fixed-300x250 {
     width: 300px; height: 250px;
   }
-  /* Força o container do bloco a respeitar o tamanho fixo */
   .ad-wrapper {
     display: flex; align-items: flex-start; justify-content: center;
     width: 300px; min-width: 300px;
@@ -199,20 +195,12 @@ All colors MUST be HSL.
 
 /* 8) Altura padrão do card de chat (equilibra com laterais 600px) */
 @layer utilities {
-  .chat-body {
-    height: 60vh; /* mantém ~proporção com 600px das laterais */
-  }
+  .chat-body { height: 60vh; }
 }
 
-/* 9) Pequeno polimento de scrollbar (opcional) */
+/* 9) Scrollbar polida (opcional) */
 @layer utilities {
-  .thin-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / .35) transparent;
-  }
+  .thin-scroll { scrollbar-width: thin; scrollbar-color: hsl(var(--muted-foreground) / .35) transparent; }
   .thin-scroll::-webkit-scrollbar { width: 8px; }
-  .thin-scroll::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / .35);
-    border-radius: 9999px;
-  }
+  .thin-scroll::-webkit-scrollbar-thumb { background: hsl(var(--muted-foreground) / .35); border-radius: 9999px; }
 }
