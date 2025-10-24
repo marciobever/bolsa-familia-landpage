@@ -12,24 +12,24 @@ export const HeroSection = () => {
         <div className="mx-auto max-w-5xl text-center">
           {/* Pill */}
           <div className="mb-6 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-            Programa Brasil Sorridente 2025
+            Programa Bolsa Família 2025
           </div>
 
           {/* Título impactante */}
           <h1 className="mb-6 text-4xl font-extrabold leading-tight text-foreground md:text-5xl lg:text-6xl">
-            Você Tem Direito a{" "}
+            Você tem direito ao{" "}
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Dentista GRATUITO!
+              Bolsa Família?
             </span>
           </h1>
 
-          {/* Subtítulo otimizado para SEO (mais denso, sem poluir) */}
+          {/* Subtítulo com SEO sem poluir */}
           <p className="mx-auto mb-8 max-w-3xl text-lg text-muted-foreground md:text-xl">
-            O <strong>Brasil Sorridente</strong> garante <strong>tratamento odontológico gratuito pelo SUS</strong>,
-            com consultas, limpezas, restaurações, tratamento de canal e, quando indicado, encaminhamento ao
-            <strong> Centro de Especialidades Odontológicas (CEO)</strong>. Para iniciar, procure a
-            <strong> UBS/ESF</strong> do seu bairro com documento com foto, <strong>Cartão do SUS (CNS)</strong> e
-            comprovante de endereço. Confira abaixo como agendar e ver sua elegibilidade em 2025.
+            Entenda como funciona o <strong>Bolsa Família 2025</strong> — benefício de transferência de renda
+            com regras de <strong>renda per capita</strong>, <strong>Cadastro Único (CadÚnico)</strong>, composição
+            familiar e acompanhamento de <strong>saúde</strong> e <strong>frequência escolar</strong>. Veja como
+            consultar o <strong>NIS</strong>, conferir o <strong>calendário de pagamentos</strong> e os próximos passos
+            para receber pela <strong>Caixa</strong>.
           </p>
 
           {/* CTAs */}
@@ -51,36 +51,36 @@ export const HeroSection = () => {
                 document.getElementById("como-agendar")?.scrollIntoView({ behavior: "smooth" })
               }
               className="w-full sm:w-auto"
-              aria-label="Ver como agendar"
+              aria-label="Ver como receber"
             >
-              Como Agendar
+              Como Receber
             </Button>
           </div>
 
-          {/* Linha discreta de confiança (opcional) */}
+          {/* Linha discreta de confiança */}
           <p className="mb-8 text-xs text-muted-foreground">
-            Atualizado em outubro de 2025 — conteúdo informativo baseado em orientações do SUS.
+            Conteúdo informativo e independente — não oficial. Atualizado em 2025.
           </p>
 
-          {/* Link em destaque (discreto, sem poluir) */}
+          {/* Link em destaque (materiais úteis) */}
           <div className="mx-auto max-w-2xl rounded-lg border bg-muted/40 p-4 text-left">
             <p className="text-sm">
-              <strong>Quer comparar opções?</strong>{" "}
+              <strong>Quer ver valores e regras detalhadas?</strong>{" "}
               <a
-                href="https://marciobevervanso.com.br/brasil-sorridente-vs-planos-odontologicos-comparativo-2025/"
+                href="https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/"
                 target="_blank"
                 rel="nofollow noopener"
                 className="underline underline-offset-2 hover:text-primary"
               >
-                Brasil Sorridente x Planos Odontológicos — Comparativo 2025
+                Bolsa Família 2025 — benefícios e regras
               </a>
             </p>
           </div>
 
-          {/* Prova social */}
+          {/* Prova social / credibilidade */}
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <CheckCircle className="h-5 w-5 text-accent" />
-            <span>Mais de 30 milhões de brasileiros já foram atendidos</span>
+            <span>Guia prático com passo a passo para inscrição e consulta</span>
           </div>
         </div>
       </div>
