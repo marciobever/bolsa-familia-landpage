@@ -8,34 +8,44 @@ import {
 export const FAQSection = () => {
   const faqs = [
     {
-      question: "Quem tem direito ao Brasil Sorridente e ao dentista grátis pelo SUS?",
+      question: "Quem tem direito ao Bolsa Família em 2025?",
       answer:
-        "Todos os usuários do SUS podem usar a Atenção em Saúde Bucal na UBS, conforme triagem clínica e prioridades locais. Não há restrições de renda ou idade.",
+        "Famílias com renda por pessoa de até R$ 218, inscritas no CadÚnico e com dados atualizados. É preciso cumprir condicionalidades de saúde e educação.",
     },
     {
-      question: "Como fazer o agendamento de dentista na UBS?",
+      question: "Quais são as condicionalidades?",
       answer:
-        "Basta comparecer à UBS mais próxima da sua residência com seus documentos (RG, CNS e comprovante de endereço) e solicitar o atendimento odontológico. A equipe fará a triagem e agendará sua consulta.",
+        "Matrícula e frequência escolar de crianças e adolescentes, vacinação em dia e acompanhamento de saúde (pré-natal quando houver gestantes).",
     },
     {
-      question: "Preciso do Cartão do SUS (CNS) para ser atendido?",
+      question: "Como faço para me inscrever?",
       answer:
-        "O Cartão do SUS (CNS) facilita o atendimento, mas não é obrigatório para o primeiro atendimento. Você pode fazer o cartão na própria UBS caso ainda não tenha.",
+        "Procure o CRAS ou setor do CadÚnico da sua cidade para cadastrar/atualizar os dados. O cadastro não garante entrada imediata: a seleção é feita pelo governo com base nos critérios.",
     },
     {
-      question: "O SUS cobre prótese dentária e implante?",
+      question: "Qual o valor do benefício?",
       answer:
-        "Sim, o SUS oferece próteses dentárias em alguns municípios através dos Centros de Especialidades Odontológicas (CEO). A disponibilidade de implantes é mais limitada e depende da rede municipal. Consulte sua UBS para saber os serviços disponíveis na sua região.",
+        "Há um valor básico por família e adicionais por composição (crianças, adolescentes, gestantes e nutrizes). O total varia conforme a renda e o perfil familiar.",
     },
     {
-      question: "Quanto tempo leva para conseguir um atendimento?",
+      question: "Quando recebo? Como funciona o calendário?",
       answer:
-        "O tempo varia conforme a demanda local e o tipo de procedimento necessário. Urgências são atendidas mais rapidamente, geralmente no mesmo dia nas UPAs. Para procedimentos eletivos, pode haver fila de espera dependendo da região.",
+        "O pagamento segue o final do NIS e ocorre mensalmente. Consulte a data no app Caixa Tem ou canais oficiais da Caixa.",
     },
     {
-      question: "Quais tratamentos estão disponíveis?",
+      question: "Como consultar situação e extrato?",
       answer:
-        "O programa oferece: consultas, prevenção, limpeza, restaurações (obturações), tratamento de canal, extrações, cirurgias básicas, e em alguns casos próteses e tratamentos especializados nos CEOs.",
+        "Use o app Caixa Tem, o app Bolsa Família, o Portal Cidadão ou vá a uma agência/lotérica da Caixa com documento e NIS.",
+    },
+    {
+      question: "Meu benefício foi bloqueado ou suspenso. O que fazer?",
+      answer:
+        "Verifique no app/Portal o motivo (ex.: dados desatualizados, condicionalidades, renda) e procure o CRAS/CadÚnico para regularizar.",
+    },
+    {
+      question: "Preciso ter conta para receber?",
+      answer:
+        "Normalmente o pagamento é via Caixa Tem. Quem não tem conta pode receber com cartão/guia em unidades da Caixa, conforme orientação local.",
     },
   ];
 
@@ -47,7 +57,7 @@ export const FAQSection = () => {
             Perguntas frequentes
           </h2>
           <p className="text-lg text-muted-foreground">
-            Tire suas dúvidas sobre o Brasil Sorridente 2025
+            Tire suas dúvidas sobre o Bolsa Família 2025
           </p>
         </div>
 
@@ -70,7 +80,7 @@ export const FAQSection = () => {
           </Accordion>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            As orientações podem variar por município conforme a capacidade da rede local.
+            As regras podem ter ajustes locais. Confirme no CRAS/CadÚnico do seu município e nos canais oficiais da Caixa.
           </p>
         </div>
       </div>
