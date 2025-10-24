@@ -1,16 +1,18 @@
 import { ExternalLink, AlertCircle, ArrowUpRight, ChevronUp } from "lucide-react";
 
 export const Footer = () => {
+  // Links oficiais (Bolsa Família)
   const official = [
-    { title: "Saúde Bucal — gov.br", url: "https://www.gov.br/saude/pt-br/assuntos/saude-bucal" },
-    { title: "Portal CNES — Consulta de Unidades", url: "http://cnes.datasus.gov.br/" },
-    { title: "Disque Saúde 136 — Teleatendimento", url: "https://www.gov.br/saude/pt-br/canais-de-atendimento/disque-saude-136" },
+    { title: "Bolsa Família — gov.br/MDS", url: "https://www.gov.br/mds/pt-br/bolsa-familia" },
+    { title: "Caixa — Bolsa Família", url: "https://www.caixa.gov.br/bolsa-familia" },
+    { title: "Calendário de Pagamentos — Caixa", url: "https://www.caixa.gov.br/beneficios-trabalhador/bolsa-familia/Paginas/default.aspx" },
   ] as const;
 
+  // Navegação interna (ajuste ids conforme as seções do seu projeto)
   const internal = [
     { title: "Benefícios", href: "#beneficios" },
     { title: "Quiz de elegibilidade", href: "#quiz" },
-    { title: "Como agendar", href: "#como-agendar" },
+    { title: "Como receber", href: "#como-receber" }, // se a seção for "como-agendar", troque o id aqui
     { title: "Perguntas frequentes", href: "#faq" },
     { title: "Assistente (chat)", href: "/assistente" },
   ] as const;
@@ -88,14 +90,15 @@ export const Footer = () => {
             <div className="flex gap-3">
               <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
               <div className="text-sm text-muted-foreground">
-                <p className="font-semibold text-foreground mb-2">Aviso importante</p>
+                <p className="mb-2 font-semibold text-foreground">Aviso importante</p>
                 <p className="mb-3">
-                  Este site não possui vínculo com o Governo Federal, Ministério da Saúde ou órgãos públicos do SUS.
-                  Os conteúdos são informativos, para orientar sobre o Brasil Sorridente.
+                  Esta página não possui vínculo com o Governo Federal, Ministério do Desenvolvimento e Assistência Social
+                  (MDS), Caixa ou quaisquer órgãos públicos. O conteúdo é informativo e serve para orientar sobre o
+                  programa Bolsa Família.
                 </p>
                 <p>
-                  Não coletamos dados pessoais, não solicitamos pagamentos e não realizamos inscrições. Para atendimento,
-                  procure a <strong>UBS/ESF</strong> da sua cidade ou canais oficiais.
+                  Não coletamos dados pessoais, não solicitamos pagamentos e não realizamos inscrições. Para cadastro e
+                  atualização, procure o <strong>CRAS/CadÚnico</strong> da sua cidade e os canais oficiais da Caixa.
                 </p>
               </div>
             </div>
@@ -105,10 +108,8 @@ export const Footer = () => {
         {/* Linha inferior */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t pt-6 text-center text-sm text-muted-foreground md:flex-row md:text-left">
           <div>
-            <p>© {year} Brasil Sorridente — Página informativa</p>
-            <p className="mt-1">
-              Preferências de privacidade e cookies geridas pela Google (AdSense/Analytics).
-            </p>
+            <p>© {year} Bolsa Família — Página informativa</p>
+            <p className="mt-1">Preferências de privacidade e cookies geridas pela Google (AdSense/Analytics).</p>
           </div>
 
           <button
