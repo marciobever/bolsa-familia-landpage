@@ -1,0 +1,32 @@
+/* Contêineres para centralizar e limitar tamanho */
+.ad-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px auto;
+  width: 100%;
+}
+
+/* Banner grande (desktop): limite para 970x250 ou 728x90 */
+.ad-banner {
+  max-width: 970px;
+  min-height: 90px;   /* reserva altura mínima p/ evitar CLS */
+}
+
+/* Quadrado (desktop): 336x280 / 300x250 */
+.ad-square {
+  max-width: 336px;
+  min-height: 250px;
+}
+
+/* O <ins> do AdSense sempre ocupa 100% do contêiner */
+.ad-wrap > .adsbygoogle {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Mobile ajustes */
+@media (max-width: 640px) {
+  .ad-banner { max-width: 320px; min-height: 100px; }  /* 320x100/50 */
+  .ad-square { max-width: 300px; min-height: 250px; }  /* 300x250 */
+}
