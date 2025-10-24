@@ -1,48 +1,54 @@
 import { Card } from "@/components/ui/card";
-import { DollarSign, MapPin, Award, ArrowRight } from "lucide-react";
+import { BadgeCheck, Wallet, CalendarDays, ArrowRight } from "lucide-react";
 
 export const BenefitsSection = () => {
+  // 3 pontos-chave do Bolsa Família
   const benefits = [
     {
-      icon: DollarSign,
-      title: "Tudo de graça",
+      icon: BadgeCheck,
+      title: "Elegibilidade clara",
       description:
-        "Consultas, prevenção, restaurações e canal. Próteses podem existir conforme a rede municipal.",
+        "Renda por pessoa de até R$ 218, cadastro no CadÚnico atualizado e cumprimento das condicionalidades (escola, vacinação e pré-natal quando houver).",
     },
     {
-      icon: MapPin,
-      title: "Perto de casa",
+      icon: Wallet,
+      title: "Valor e adicionais",
       description:
-        "Atendimento na UBS/ESF do bairro e, quando necessário, no Centro de Especialidades Odontológicas (CEO).",
+        "Benefício mínimo por família com adicionais para gestantes, nutrizes, crianças e adolescentes. Pagamento preferencial via Caixa Tem.",
     },
     {
-      icon: Award,
-      title: "Dentistas qualificados",
+      icon: CalendarDays,
+      title: "Calendário organizado",
       description:
-        "Profissionais cadastrados no CNES e protocolos de atenção à saúde bucal.",
+        "Recebimento por NIS, com calendário mensal oficial. Acompanhe pelo app Caixa Tem e canais da Caixa.",
     },
   ];
 
+  // Leituras recomendadas (seu blog)
   const resources = [
     {
+      title: "Bolsa Família 2025 — benefícios e regras",
+      desc: "Quem tem direito, valores por perfil, condicionalidades e como receber.",
+      url: "https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/",
+      tag: "Guia completo",
+    },
+    {
       title: "Guia de Benefícios Sociais 2025",
-      desc: "Entenda direitos, quem tem acesso e como solicitar.",
+      desc: "Panorama de direitos, inscrições e documentos essenciais.",
       url: "https://marciobevervanso.com.br/beneficios-sociais-governo-federal-guia-direitos-2025/",
+      tag: "Leitura rápida",
+    },
+    {
+      title: "Minha Casa Minha Vida 2025 — faixas e benefícios",
+      desc: "Entenda faixas de renda, regras e como participar.",
+      url: "https://marciobevervanso.com.br/minha-casa-minha-vida-2025-comparativo-faixas-beneficios/",
+      tag: "Comparativo",
     },
     {
       title: "CNH Social 2025 — regras e comparação",
       desc: "Critérios por estado, documentos e prazos.",
       url: "https://marciobevervanso.com.br/cnh-gratuita-social-comparativo-regras-2025/",
-    },
-    {
-      title: "Bolsa Família 2025 — benefícios e regras",
-      desc: "Valores, composição familiar e atualização de cadastro.",
-      url: "https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/",
-    },
-    {
-      title: "Minha Casa Minha Vida 2025 — faixas e benefícios",
-      desc: "Quem tem direito, rendas por faixa e vantagens.",
-      url: "https://marciobevervanso.com.br/minha-casa-minha-vida-2025-comparativo-faixas-beneficios/",
+      tag: "Oportunidade",
     },
   ];
 
@@ -51,11 +57,14 @@ export const BenefitsSection = () => {
       <div className="container mx-auto px-4">
         {/* Título */}
         <div className="mb-12 text-center">
+          <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+            Atualizado 2025
+          </div>
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Por que escolher o Brasil Sorridente?
+            Por que conferir o Bolsa Família 2025?
           </h2>
           <p className="text-lg text-muted-foreground">
-            Atendimento odontológico completo e gratuito em todo o país.
+            Veja os pontos principais para entender se sua família tem direito e como receber.
           </p>
         </div>
 
@@ -80,7 +89,7 @@ export const BenefitsSection = () => {
           <div className="mb-4 text-center">
             <h3 className="text-2xl font-semibold">Recursos úteis para você</h3>
             <p className="text-muted-foreground">
-              Conteúdos que complementam sua jornada de acesso a direitos e serviços.
+              Materiais que complementam sua jornada de acesso a benefícios.
             </p>
           </div>
 
@@ -96,6 +105,11 @@ export const BenefitsSection = () => {
                 <Card className="flex h-full items-stretch justify-between gap-4 rounded-xl border-2 p-5 transition-colors hover:border-primary/50">
                   {/* texto */}
                   <div className="flex min-w-0 flex-1 flex-col">
+                    <div className="mb-1 inline-flex items-center gap-2">
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        {r.tag}
+                      </span>
+                    </div>
                     <h4 className="text-base font-semibold leading-snug">
                       {r.title}
                     </h4>
@@ -118,10 +132,6 @@ export const BenefitsSection = () => {
             ))}
           </div>
 
-          <p className="mx-auto mt-6 max-w-3xl text-center text-sm text-muted-foreground">
-            A disponibilidade de procedimentos pode variar por município conforme
-            registro no CNES e demanda local.
-          </p>
         </div>
       </div>
     </section>
