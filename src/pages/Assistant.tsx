@@ -14,7 +14,7 @@ const SLOT_RIGHT = "4401401741";
 function uuid() {
   return crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
 }
-function useSessionId(key = "assistente_sid") {
+function useSessionId(key = "assistente_sid_bf") {
   return useMemo(() => {
     let sid = localStorage.getItem(key);
     if (!sid) {
@@ -46,19 +46,19 @@ function SideFixedAd({ slot }: { slot: string }) {
 export default function Assistant() {
   const sid = useSessionId();
 
-  // Mensagem inicial mais rica (SEO-friendly, natural e curta o suficiente p/ chat)
+  // Mensagem inicial (Bolsa Família) — curta, natural e com termos-chave
   const [msgs, setMsgs] = useState<Msg[]>([
     {
       id: "hello",
       from: "bot",
       text:
-        "Oi, eu sou a Clara 😊 Posso te ajudar a entender como conseguir dentista gratuito pelo SUS no Brasil Sorridente — documentos, triagem na UBS/ESF, quando vai para o CEO e como agendar. Me conta rapidinho sua dúvida ou sua cidade, que eu te guio passo a passo.",
+        "Oi, eu sou a Clara 😊 Posso te ajudar com Bolsa Família: regras de elegibilidade, renda per capita, CadÚnico/CRAS, NIS e calendário de pagamentos. Me diz sua dúvida (ou sua cidade/UF) e eu te guio no passo a passo.",
     },
   ]);
 
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);     // requisição em andamento
-  const [typingVisible, setTypingVisible] = useState(false); // “digitando…” aparece só após 4s
+  const [isLoading, setIsLoading] = useState(false);           // request em andamento
+  const [typingVisible, setTypingVisible] = useState(false);   // “digitando…” só após ~4s
 
   // ----- Auto-scroll “inteligente” -----
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,7 @@ export default function Assistant() {
   }
 
   useEffect(() => {
-    ga.event("chat_view", { page: "assistente" });
+    ga.event("chat_view", { page: "assistente_bolsa" });
   }, []);
 
   // Centraliza o card ao abrir e inicia grudado no fim
@@ -92,7 +92,7 @@ export default function Assistant() {
 
   useEffect(() => {
     if (autoStick) scrollToBottom("smooth");
-  }, [msgs, isLoading, typingVisible]); // rola quando muda algo visível
+  }, [msgs, isLoading, typingVisible]);
 
   useEffect(() => {
     const onResize = () => {
@@ -109,8 +109,8 @@ export default function Assistant() {
     setMsgs((m) => [...m, { id: uuid(), from: "user", text: q }]);
     setInput("");
     setIsLoading(true);
-    setTypingVisible(false); // reseta a visibilidade
-    ga.event("chat_ask", { len: q.length });
+    setTypingVisible(false);
+    ga.event("chat_ask", { len: q.length, theme: "bolsa" });
 
     // Mostra “digitando” apenas após ~4s (sem travar a chamada ao n8n)
     const typingTimer = setTimeout(() => setTypingVisible(true), 4000);
@@ -125,7 +125,7 @@ export default function Assistant() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: q,
-          context: { slug: "brasil-sorridente", display_name: "Clara" },
+          context: { slug: "bolsa-familia", display_name: "Clara" },
           session: { id: sid },
         }),
       });
@@ -150,13 +150,13 @@ export default function Assistant() {
       if (!replyStr) replyStr = "...";
 
       setMsgs((m) => [...m, { id: uuid(), from: "bot", text: String(replyStr) }]);
-      ga.event("chat_answer");
+      ga.event("chat_answer", { theme: "bolsa" });
     } catch (err: any) {
       setMsgs((m) => [
         ...m,
         { id: uuid(), from: "bot", text: "Não consegui responder agora. Pode tentar de novo? 🙏" },
       ]);
-      ga.event("chat_error", { msg: String(err?.message || err) });
+      ga.event("chat_error", { msg: String(err?.message || err), theme: "bolsa" });
     } finally {
       clearTimeout(typingTimer);
       setTypingVisible(false);
@@ -168,14 +168,13 @@ export default function Assistant() {
     <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4 py-8">
         <div className="mx-auto w-full max-w-[1360px]">
-          {/* 300 (esq) + 24 (gap) + 720 (chat) + 24 (gap) + 300 (dir) = 1368 ~ ok */}
+          {/* 300 (esq) + 24 (gap) + 720 (chat) + 24 (gap) + 300 (dir) */}
           <div className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,720px)_300px] gap-6 items-start">
             {/* LATERAL ESQUERDA */}
             <SideFixedAd slot={SLOT_LEFT} />
 
             {/* CHAT CENTRAL */}
             <div ref={cardRef} className="bg-card border rounded-lg shadow-soft overflow-hidden">
-              {/* Mensagens */}
               <div
                 ref={scrollRef}
                 className="p-4 h-[500px] overflow-y-auto thin-scroll"
@@ -230,7 +229,7 @@ export default function Assistant() {
               >
                 <input
                   className="flex-1 border rounded-lg px-3 py-3 outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Escreva sua dúvida…"
+                  placeholder="Escreva sua dúvida… (ex.: valor por pessoa, cadÚnico, NIS, calendário)"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />
@@ -245,7 +244,7 @@ export default function Assistant() {
           </div>
 
           <p className="mt-4 text-[12px] text-muted-foreground text-center">
-            Conteúdo informativo. Procure sua <strong>UBS/ESF</strong> para orientação oficial.
+            Conteúdo informativo. Procure o <strong>CRAS</strong> da sua cidade para orientações oficiais sobre CadÚnico e Bolsa Família.
           </p>
         </div>
       </div>
