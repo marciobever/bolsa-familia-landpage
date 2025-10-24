@@ -33,8 +33,6 @@ function SideFixedAd({ slot }: { slot: string }) {
         <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2 text-center">
           Patrocinado
         </div>
-
-        {/* área útil com 600px menos o label acima */}
         <div className="flex-1 flex items-start justify-center">
           <div className="w-[300px] h-[250px]">
             <AdUnit slot={slot} style={{ width: 300, height: 250, display: "inline-block" }} />
@@ -47,16 +45,20 @@ function SideFixedAd({ slot }: { slot: string }) {
 
 export default function Assistant() {
   const sid = useSessionId();
-  const [input, setInput] = useState("");
+
+  // Mensagem inicial mais rica (SEO-friendly, natural e curta o suficiente p/ chat)
   const [msgs, setMsgs] = useState<Msg[]>([
     {
       id: "hello",
       from: "bot",
       text:
-        "Oi, eu sou a Clara 😊 Posso te ajudar com Brasil Sorridente (dentista gratuito pelo SUS). Me fala sua dúvida.",
+        "Oi, eu sou a Clara 😊 Posso te ajudar a entender como conseguir dentista gratuito pelo SUS no Brasil Sorridente — documentos, triagem na UBS/ESF, quando vai para o CEO e como agendar. Me conta rapidinho sua dúvida ou sua cidade, que eu te guio passo a passo.",
     },
   ]);
-  const [typing, setTyping] = useState(false);
+
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);     // requisição em andamento
+  const [typingVisible, setTypingVisible] = useState(false); // “digitando…” aparece só após 4s
 
   // ----- Auto-scroll “inteligente” -----
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -90,7 +92,7 @@ export default function Assistant() {
 
   useEffect(() => {
     if (autoStick) scrollToBottom("smooth");
-  }, [msgs, typing]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [msgs, isLoading, typingVisible]); // rola quando muda algo visível
 
   useEffect(() => {
     const onResize = () => {
@@ -102,12 +104,16 @@ export default function Assistant() {
 
   async function ask(question: string) {
     const q = question.trim();
-    if (!q || typing) return;
+    if (!q || isLoading) return;
 
     setMsgs((m) => [...m, { id: uuid(), from: "user", text: q }]);
     setInput("");
-    setTyping(true);
+    setIsLoading(true);
+    setTypingVisible(false); // reseta a visibilidade
     ga.event("chat_ask", { len: q.length });
+
+    // Mostra “digitando” apenas após ~4s (sem travar a chamada ao n8n)
+    const typingTimer = setTimeout(() => setTypingVisible(true), 4000);
 
     const ctl = new AbortController();
     const to  = setTimeout(() => ctl.abort(), 120000);
@@ -152,7 +158,9 @@ export default function Assistant() {
       ]);
       ga.event("chat_error", { msg: String(err?.message || err) });
     } finally {
-      setTyping(false);
+      clearTimeout(typingTimer);
+      setTypingVisible(false);
+      setIsLoading(false);
     }
   }
 
@@ -167,11 +175,10 @@ export default function Assistant() {
 
             {/* CHAT CENTRAL */}
             <div ref={cardRef} className="bg-card border rounded-lg shadow-soft overflow-hidden">
-              {/* Mensagens: altura fixa p/ acompanhar as laterais de 600px.
-                 600 total - ~100 do input/header ≈ 500px de viewport de conversa */}
+              {/* Mensagens */}
               <div
                 ref={scrollRef}
-                className="p-4 h-[500px] overflow-y-auto"
+                className="p-4 h-[500px] overflow-y-auto thin-scroll"
                 onScroll={(e) => {
                   const el = e.currentTarget as HTMLDivElement;
                   setAutoStick(isNearBottom(el));
@@ -198,7 +205,8 @@ export default function Assistant() {
                   );
                 })}
 
-                {typing && (
+                {/* “digitando…” só aparece depois de ~4s */}
+                {isLoading && typingVisible && (
                   <div className="mb-3 flex justify-start">
                     <div className="bg-muted rounded-xl px-3 py-2 text-foreground">
                       <span className="inline-flex items-center gap-1">
@@ -226,8 +234,8 @@ export default function Assistant() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />
-                <Button type="submit" variant="hero" disabled={typing}>
-                  {typing ? "Aguardando..." : "Enviar"}
+                <Button type="submit" variant="hero" disabled={isLoading}>
+                  {isLoading ? "Aguardando..." : "Enviar"}
                 </Button>
               </form>
             </div>
