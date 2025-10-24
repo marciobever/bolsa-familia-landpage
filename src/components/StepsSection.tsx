@@ -1,32 +1,32 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, ClipboardList, Phone, Clock } from "lucide-react";
+import { IdCard, Building2, Smartphone, CalendarDays } from "lucide-react";
 
 export const StepsSection = () => {
   const steps = [
     {
-      icon: FileText,
-      title: "Reúna os documentos",
+      icon: IdCard,
+      title: "Separe os documentos",
       description:
-        "Leve documento com foto, Cartão do SUS (CNS) e comprovante de endereço à sua UBS/ESF.",
+        "Leve CPF de todos da família, documento com foto, comprovante de endereço e, se tiver, NIS.",
     },
     {
-      icon: ClipboardList,
-      title: "Solicite a triagem odontológica",
+      icon: Building2,
+      title: "CadÚnico no CRAS",
       description:
-        "A equipe avalia sua necessidade; se indicado, você é encaminhado ao Centro de Especialidades Odontológicas (CEO).",
+        "Faça ou atualize o CadÚnico no CRAS/posto do seu município. Entrevista e validação do cadastro.",
     },
     {
-      icon: Clock,
-      title: "Urgências 24h",
+      icon: Smartphone,
+      title: "Acompanhe a análise",
       description:
-        "Para dor forte, infecções ou traumas, procure a UPA mais próxima. Atendimento de urgência é priorizado.",
+        "Veja o status pelo app Bolsa Família/CAIXA Tem ou consulta pública do CadÚnico. Prefeituras também informam.",
     },
     {
-      icon: Phone,
-      title: "Tire suas dúvidas",
+      icon: CalendarDays,
+      title: "Receba e mantenha",
       description:
-        "Dúvidas gerais? Ligue 136 (Disque Saúde) para informações sobre serviços e horários.",
+        "Siga o calendário de pagamento e mantenha o benefício: condicionalidades de saúde/educação e cadastro atualizado.",
     },
   ] as const;
 
@@ -38,16 +38,16 @@ export const StepsSection = () => {
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 id="como-agendar-title" className="mb-4 text-3xl font-bold md:text-4xl">
-            Como agendar na sua cidade
+            Como receber o Bolsa Família
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Siga estes passos simples para começar seu atendimento odontológico gratuito pelo SUS.
+            Siga estes passos para se cadastrar, acompanhar o resultado e manter o benefício ativo.
           </p>
         </div>
 
         <ol
           className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto"
-          aria-label="Passo a passo do agendamento"
+          aria-label="Passo a passo para receber o Bolsa Família"
         >
           {steps.map((step, index) => (
             <li key={step.title} className="list-none">
@@ -75,10 +75,10 @@ export const StepsSection = () => {
 
         <div className="mt-10 text-center">
           <p className="text-sm text-muted-foreground italic max-w-2xl mx-auto">
-            A oferta de procedimentos varia por município e disponibilidade registrada no CNES.
+            A seleção considera renda e regras do programa. Mantenha o CadÚnico atualizado (no máximo a cada 24 meses).
           </p>
 
-          {/* CTA opcional para o quiz (mantém o fluxo) */}
+          {/* CTA opcional para o quiz (se existir na página) */}
           <div className="mt-4">
             <Button variant="hero" size="lg" onClick={goQuiz} aria-label="Ir para o quiz de elegibilidade">
               Verificar elegibilidade
