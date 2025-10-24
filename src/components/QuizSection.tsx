@@ -5,27 +5,32 @@ import { ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { ga, observeImpressionById } from "@/lib/analytics";
 
-// links finais
+// links finais (prioriza Bolsa Família e materiais do seu blog)
 const FINAL_LINKS = [
   {
+    title: "Bolsa Família 2025 — benefícios e regras",
+    desc: "Quem tem direito, valores por perfil, condicionalidades e como receber.",
+    url: "https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/",
+  },
+  {
     title: "Guia de Benefícios Sociais 2025",
-    desc: "Panorama dos principais direitos e programas em 2025.",
+    desc: "Panorama dos principais direitos, inscrições e documentos.",
     url: "https://marciobevervanso.com.br/beneficios-sociais-governo-federal-guia-direitos-2025/",
+  },
+  {
+    title: "Minha Casa Minha Vida 2025 — faixas e benefícios",
+    desc: "Entenda as faixas de renda, regras e como participar.",
+    url: "https://marciobevervanso.com.br/minha-casa-minha-vida-2025-comparativo-faixas-beneficios/",
   },
   {
     title: "CNH Social 2025 — regras e comparação",
     desc: "Quem tem direito, diferenças por estado e como participar.",
     url: "https://marciobevervanso.com.br/cnh-gratuita-social-comparativo-regras-2025/",
   },
-  {
-    title: "Bolsa Família 2025 — benefícios e regras",
-    desc: "Valores, critérios e composição do benefício em 2025.",
-    url: "https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/",
-  },
 ];
 
 export const QuizSection = () => {
-  const [started, setStarted] = useState(false);           // 👈 gate do quiz
+  const [started, setStarted] = useState(false);
   const [firstAnswered, setFirstAnswered] = useState(false);
   const [step, setStep] = useState(1);
   const [finished, setFinished] = useState(false);
@@ -33,27 +38,66 @@ export const QuizSection = () => {
   const [showFab, setShowFab] = useState(false);
 
   const total = 9;
+
+  // Perguntas focadas em Bolsa Família
   const questions = [
-    { key: "age",            text: "Qual sua faixa etária?", options: ["Menos de 18 anos", "Entre 18 e 40 anos", "Entre 41 e 60 anos", "Mais de 60 anos"] },
-    { key: "income",         text: "Você possui renda familiar de até 3 salários mínimos?", options: ["Sim", "Não"] },
-    { key: "enrolledSUS",    text: "Você já possui Cartão do SUS (CNS)?", options: ["Sim", "Ainda não"] },
-    { key: "registeredUBS",  text: "Está cadastrado em alguma UBS (Unidade Básica de Saúde)?", options: ["Sim", "Não", "Não sei"] },
-    { key: "needsTreatment", text: "Você precisa de algum tratamento específico (ex: canal, prótese)?", options: ["Sim", "Não", "Não sei"] },
-    { key: "urgent",         text: "Está com dor ou problema odontológico urgente?", options: ["Sim", "Não"] },
-    { key: "documents",      text: "Você possui documento com foto e comprovante de endereço?", options: ["Sim, tenho todos", "Não, preciso providenciar"] },
-    { key: "visitedBefore",  text: "Já foi atendido pelo programa Brasil Sorridente antes?", options: ["Sim", "Não", "Não sei"] },
-    { key: "awareProgram",   text: "Você já conhecia o programa Brasil Sorridente?", options: ["Sim", "Não"] },
+    {
+      key: "renda",
+      text: "Qual é a renda familiar per capita?",
+      options: ["Até R$ 218", "Entre R$ 219 e R$ 660", "Acima de R$ 660"],
+    },
+    {
+      key: "cadunico",
+      text: "Sua família está inscrita no CadÚnico?",
+      options: ["Sim, atualizado (menos de 24 meses)", "Sim, mas desatualizado", "Não sei/Não"],
+    },
+    {
+      key: "composicao",
+      text: "Na família há gestantes, nutrizes ou crianças/adolescentes (0–17 anos)?",
+      options: ["Sim", "Não", "Não sei"],
+    },
+    {
+      key: "escola",
+      text: "As crianças/adolescentes (4–17) cumprem a frequência escolar exigida?",
+      options: ["Sim", "Não", "Não se aplica"],
+    },
+    {
+      key: "saude",
+      text: "Caderneta de vacinação e pré-natal (quando houver) estão em dia?",
+      options: ["Sim", "Não", "Não se aplica"],
+    },
+    {
+      key: "nis",
+      text: "Você conhece/possui o número do NIS (PIS/PASEP) dos membros?",
+      options: ["Sim", "Não"],
+    },
+    {
+      key: "documentos",
+      text: "Possui documentos de todos os membros do grupo familiar?",
+      options: ["Sim, todos", "Não, preciso providenciar"],
+    },
+    {
+      key: "ja_recebeu",
+      text: "Algum membro já recebeu Bolsa Família/Auxílio Brasil?",
+      options: ["Sim", "Não", "Não sei"],
+    },
+    {
+      key: "conta",
+      text: "Possui Caixa Tem ou prefere receber por cartão/banco?",
+      options: ["Tenho Caixa Tem", "Prefiro cartão", "Outra conta/Não sei"],
+    },
   ];
 
-  // -------- Analytics base + ads impressions --------
+  // -------- Analytics base + (se usar ads nesta página) --------
   useEffect(() => {
-    ga.event("quiz_gate_view", { page: "dentista" }); // tela de abertura do quiz
-    observeImpressionById("ad-horizontal-topo", "ad_view");
-    observeImpressionById("ad-quadrado-sidebar", "ad_view");
-    observeImpressionById("ad-multiplex-final", "ad_view");
+    ga.event("quiz_gate_view", { page: "bolsa_familia" });
+    // Se houver blocos de anúncio com id, pode medir impressão:
+    observeImpressionById?.("ad-horizontal-topo", "ad_view");
+    observeImpressionById?.("ad-quadrado-sidebar", "ad_view");
+    observeImpressionById?.("ad-multiplex-final", "ad_view");
   }, []);
 
-  // FAB “voltar ao topo” aparece após algum scroll (apenas no resultado)
+  // FAB “voltar ao topo” aparece após scroll (apenas no resultado)
   useEffect(() => {
     const handleScroll = () => setShowFab(window.scrollY > 600 && finished);
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -66,14 +110,12 @@ export const QuizSection = () => {
     setStep(1);
     setAnswers({});
     setFirstAnswered(false);
-    ga.event("quiz_start", { theme: "dentista", via: "start_button" });
+    ga.event("quiz_start", { theme: "bolsa_familia", via: "start_button" });
   };
 
   const selectOption = (option: string) => {
     const key = questions[step - 1].key;
     setAnswers((prev) => ({ ...prev, [key]: option }));
-
-    // Marca primeira resposta real (interesse forte)
     if (!firstAnswered && step === 1) {
       ga.event("quiz_first_answer", { option });
       setFirstAnswered(true);
@@ -86,7 +128,6 @@ export const QuizSection = () => {
       toast.error("Por favor, selecione uma opção");
       return;
     }
-
     ga.event("quiz_step", { step });
 
     if (step < total) {
@@ -106,7 +147,7 @@ export const QuizSection = () => {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-2xl">
           <h2 className="mb-8 text-center text-3xl font-bold md:text-4xl">
-            Descubra se Você Tem Direito ao Dentista Gratuito
+            Descubra se Você Tem Direito ao Bolsa Família
           </h2>
 
           <Card className={`p-6 md:p-8 shadow-soft ${finished ? "pb-24" : ""}`}>
@@ -114,7 +155,8 @@ export const QuizSection = () => {
             {!started && !finished && (
               <div className="space-y-6 text-center">
                 <p className="text-muted-foreground">
-                  Responda um questionário rápido para verificarmos sua <strong>elegibilidade</strong> no programa Brasil Sorridente.
+                  Responda um questionário rápido para verificarmos sua <strong>elegibilidade</strong> ao{" "}
+                  <strong>Bolsa Família 2025</strong>.
                 </p>
                 <ul className="text-left grid gap-3 sm:grid-cols-2">
                   <li className="p-3 rounded-md bg-muted">✔️ Leva menos de 1 minuto</li>
@@ -128,7 +170,7 @@ export const QuizSection = () => {
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Conteúdo informativo. Procure sua <strong>UBS/ESF</strong> para orientação oficial.
+                  Conteúdo informativo. Procure o <strong>CRAS</strong> e mantenha o <strong>CadÚnico</strong> atualizado.
                 </p>
               </div>
             )}
@@ -138,27 +180,27 @@ export const QuizSection = () => {
               <>
                 {/* Progresso */}
                 <div className="mb-8">
-                  <div className="flex justify-between mb-2 text-sm text-muted-foreground">
+                  <div className="mb-2 flex justify-between text-sm text-muted-foreground">
                     <span>Passo {step} de {total}</span>
                     <span>{progressPct}%</span>
                   </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
                     <div
-                      className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
+                      className="h-full transition-all duration-500 bg-gradient-to-r from-primary to-accent"
                       style={{ width: `${progressPct}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Pergunta atual */}
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <h3 className="text-xl font-semibold mb-4">{questions[step - 1].text}</h3>
+                <div className="animate-in fade-in duration-300 space-y-4">
+                  <h3 className="mb-4 text-xl font-semibold">{questions[step - 1].text}</h3>
                   <div className="space-y-3">
                     {questions[step - 1].options.map((option) => (
                       <button
                         key={option}
                         onClick={() => selectOption(option)}
-                        className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
+                        className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
                           answers[questions[step - 1].key] === option
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
@@ -171,7 +213,7 @@ export const QuizSection = () => {
                 </div>
 
                 {/* Navegação */}
-                <div className="flex justify-between mt-8">
+                <div className="mt-8 flex justify-between">
                   <Button
                     variant="outline"
                     onClick={() => setStep(Math.max(1, step - 1))}
@@ -193,23 +235,26 @@ export const QuizSection = () => {
               <>
                 <div className="mb-6 flex justify-center">
                   <a
-                    href="https://marciobevervanso.com.br/brasil-sorridente-vs-planos-odontologicos-comparativo-2025/"
+                    href="https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/"
                     target="_blank"
                     rel="nofollow noopener"
-                    className="btn-hero w-full sm:w-auto px-6 py-4 text-base sm:text-lg text-center shadow-strong hover:shadow-strong active:opacity-95"
-                    aria-label="Veja como se Inscrever"
-                    onClick={() => ga.event("cta_click", { id: "inscrever_btn", placement: "quiz_result" })}
+                    className="btn-hero w-full sm:w-auto px-6 py-4 text-center text-base sm:text-lg shadow-strong hover:shadow-strong active:opacity-95"
+                    aria-label="Ver valores, regras e como receber"
+                    onClick={() =>
+                      ga.event("cta_click", { id: "bf_regras_cta", placement: "quiz_result" })
+                    }
                   >
-                    Veja como se Inscrever!
+                    Ver valores, regras e como receber
                   </a>
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-semibold mb-3">Orientações e próximos passos</h3>
-                <p className="text-muted-foreground mb-6">
-                  Procure sua <strong>UBS/ESF</strong> para triagem e, se necessário, encaminhamento a um
-                  <strong> Centro de Especialidades Odontológicas (CEO)</strong>. Veja também:
+                <h3 className="mb-3 text-lg font-semibold sm:text-xl">Orientações e próximos passos</h3>
+                <p className="mb-6 text-muted-foreground">
+                  Mantenha o <strong>CadÚnico</strong> atualizado no <strong>CRAS</strong> e acompanhe o calendário de
+                  pagamentos pelo <strong>Caixa Tem</strong> ou cartão. Veja também:
                 </p>
 
+                {/* Links úteis (cards clicáveis inteiros) */}
                 <ul className="grid gap-3">
                   {FINAL_LINKS.map((l) => (
                     <li key={l.url}>
@@ -217,17 +262,18 @@ export const QuizSection = () => {
                         href={l.url}
                         target="_blank"
                         rel="nofollow noopener"
-                        className="block p-4 rounded-lg border-2 border-border hover:border-primary/50 transition-all break-words"
-                        onClick={() => ga.event("outbound_click", { url: l.url, from: "quiz_result" })}
+                        className="block break-words rounded-lg border-2 border-border p-4 transition-all hover:border-primary/50"
+                        onClick={() => ga.event("outbound_click", { url: l.url, from: "quiz_result_bf" })}
                       >
                         <div className="font-semibold underline-offset-2 hover:underline">{l.title}</div>
-                        {l.desc && <p className="text-sm text-muted-foreground mt-1">{l.desc}</p>}
+                        {l.desc && <p className="mt-1 text-sm text-muted-foreground">{l.desc}</p>}
                       </a>
                     </li>
                   ))}
                 </ul>
 
-                <div className="flex flex-col sm:flex-row gap-3 justify-end mt-8">
+                {/* Ações finais */}
+                <div className="mt-8 flex flex-col justify-end gap-3 sm:flex-row">
                   <Button
                     variant="outline"
                     size="lg"
@@ -237,7 +283,7 @@ export const QuizSection = () => {
                       setStep(1);
                       setAnswers({});
                       setFirstAnswered(false);
-                      ga.event("quiz_restart");
+                      ga.event("quiz_restart", { theme: "bolsa_familia" });
                     }}
                   >
                     Refazer quiz
@@ -256,7 +302,7 @@ export const QuizSection = () => {
       {showFab && (
         <button
           onClick={goTop}
-          className="fixed right-4 sm:right-6 bottom-24 sm:bottom-28 z-[60] rounded-full shadow-strong bg-gradient-primary text-white p-3"
+          className="fixed right-4 bottom-24 sm:bottom-28 z-[60] rounded-full bg-gradient-primary p-3 text-white shadow-strong sm:right-6"
           aria-label="Voltar ao topo"
         >
           <ArrowUp className="h-5 w-5" />
