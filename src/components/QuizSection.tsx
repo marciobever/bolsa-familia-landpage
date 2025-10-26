@@ -1,9 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { ga, observeImpressionById } from "@/lib/analytics";
+
+// ==== Helper mínimo para Umami (sem arquivo extra) ====
+declare global {
+  interface Window {
+    umami?: { track: (event: string, data?: Record<string, any>) => void };
+  }
+}
+const um = (event: string, data?: Record<string, any>) => {
+  try {
+    if (typeof window !== "undefined") window.umami?.track?.(event, data);
+  } catch {}
+};
+// =====================================================
+
+const THEME = "bolsa_familia";
 
 // links finais (prioriza Bolsa Família e materiais do seu blog)
 const FINAL_LINKS = [
@@ -41,56 +56,22 @@ export const QuizSection = () => {
 
   // Perguntas focadas em Bolsa Família
   const questions = [
-    {
-      key: "renda",
-      text: "Qual é a renda familiar per capita?",
-      options: ["Até R$ 218", "Entre R$ 219 e R$ 660", "Acima de R$ 660"],
-    },
-    {
-      key: "cadunico",
-      text: "Sua família está inscrita no CadÚnico?",
-      options: ["Sim, atualizado (menos de 24 meses)", "Sim, mas desatualizado", "Não sei/Não"],
-    },
-    {
-      key: "composicao",
-      text: "Na família há gestantes, nutrizes ou crianças/adolescentes (0–17 anos)?",
-      options: ["Sim", "Não", "Não sei"],
-    },
-    {
-      key: "escola",
-      text: "As crianças/adolescentes (4–17) cumprem a frequência escolar exigida?",
-      options: ["Sim", "Não", "Não se aplica"],
-    },
-    {
-      key: "saude",
-      text: "Caderneta de vacinação e pré-natal (quando houver) estão em dia?",
-      options: ["Sim", "Não", "Não se aplica"],
-    },
-    {
-      key: "nis",
-      text: "Você conhece/possui o número do NIS (PIS/PASEP) dos membros?",
-      options: ["Sim", "Não"],
-    },
-    {
-      key: "documentos",
-      text: "Possui documentos de todos os membros do grupo familiar?",
-      options: ["Sim, todos", "Não, preciso providenciar"],
-    },
-    {
-      key: "ja_recebeu",
-      text: "Algum membro já recebeu Bolsa Família/Auxílio Brasil?",
-      options: ["Sim", "Não", "Não sei"],
-    },
-    {
-      key: "conta",
-      text: "Possui Caixa Tem ou prefere receber por cartão/banco?",
-      options: ["Tenho Caixa Tem", "Prefiro cartão", "Outra conta/Não sei"],
-    },
+    { key: "renda",       text: "Qual é a renda familiar per capita?", options: ["Até R$ 218", "Entre R$ 219 e R$ 660", "Acima de R$ 660"] },
+    { key: "cadunico",    text: "Sua família está inscrita no CadÚnico?", options: ["Sim, atualizado (menos de 24 meses)", "Sim, mas desatualizado", "Não sei/Não"] },
+    { key: "composicao",  text: "Na família há gestantes, nutrizes ou crianças/adolescentes (0–17 anos)?", options: ["Sim", "Não", "Não sei"] },
+    { key: "escola",      text: "As crianças/adolescentes (4–17) cumprem a frequência escolar exigida?", options: ["Sim", "Não", "Não se aplica"] },
+    { key: "saude",       text: "Caderneta de vacinação e pré-natal (quando houver) estão em dia?", options: ["Sim", "Não", "Não se aplica"] },
+    { key: "nis",         text: "Você conhece/possui o número do NIS (PIS/PASEP) dos membros?", options: ["Sim", "Não"] },
+    { key: "documentos",  text: "Possui documentos de todos os membros do grupo familiar?", options: ["Sim, todos", "Não, preciso providenciar"] },
+    { key: "ja_recebeu",  text: "Algum membro já recebeu Bolsa Família/Auxílio Brasil?", options: ["Sim", "Não", "Não sei"] },
+    { key: "conta",       text: "Possui Caixa Tem ou prefere receber por cartão/banco?", options: ["Tenho Caixa Tem", "Prefiro cartão", "Outra conta/Não sei"] },
   ];
 
   // -------- Analytics base + (se usar ads nesta página) --------
   useEffect(() => {
-    ga.event("quiz_gate_view", { page: "bolsa_familia" });
+    ga.event("quiz_gate_view", { page: THEME });
+    um("quiz_gate_view", { page: THEME });
+
     // Se houver blocos de anúncio com id, pode medir impressão:
     observeImpressionById?.("ad-horizontal-topo", "ad_view");
     observeImpressionById?.("ad-quadrado-sidebar", "ad_view");
@@ -110,16 +91,24 @@ export const QuizSection = () => {
     setStep(1);
     setAnswers({});
     setFirstAnswered(false);
-    ga.event("quiz_start", { theme: "bolsa_familia", via: "start_button" });
+
+    ga.event("quiz_start", { theme: THEME, via: "start_button" });
+    um("quiz_start", { theme: THEME, via: "start_button" });
   };
 
   const selectOption = (option: string) => {
-    const key = questions[step - 1].key;
-    setAnswers((prev) => ({ ...prev, [key]: option }));
+    const q = questions[step - 1];
+    setAnswers((prev) => ({ ...prev, [q.key]: option }));
+
+    // primeiro clique da primeira pergunta
     if (!firstAnswered && step === 1) {
       ga.event("quiz_first_answer", { option });
+      um("quiz_first_answer", { option });
       setFirstAnswered(true);
     }
+
+    // clique em qualquer opção
+    um("quiz_answer_select", { step, key: q.key, option });
   };
 
   const handleNext = () => {
@@ -128,13 +117,16 @@ export const QuizSection = () => {
       toast.error("Por favor, selecione uma opção");
       return;
     }
+
     ga.event("quiz_step", { step });
+    um("quiz_step", { step });
 
     if (step < total) {
       setStep(step + 1);
     } else {
       setFinished(true); // sem scroll automático
       ga.event("quiz_finish", { total_steps: total });
+      um("quiz_finish", { total_steps: total, answers }); // envia o snapshot das respostas
       toast.success("Obrigado! Veja as orientações abaixo.");
     }
   };
@@ -165,7 +157,12 @@ export const QuizSection = () => {
                   <li className="p-3 rounded-md bg-muted">✔️ Links úteis ao final</li>
                 </ul>
                 <div className="flex justify-center">
-                  <Button size="lg" variant="hero" onClick={startQuiz} aria-label="Iniciar avaliação de elegibilidade">
+                  <Button
+                    size="lg"
+                    variant="hero"
+                    onClick={startQuiz}
+                    aria-label="Iniciar avaliação de elegibilidade"
+                  >
                     Iniciar avaliação de elegibilidade
                   </Button>
                 </div>
@@ -240,9 +237,10 @@ export const QuizSection = () => {
                     rel="nofollow noopener"
                     className="btn-hero w-full sm:w-auto px-6 py-4 text-center text-base sm:text-lg shadow-strong hover:shadow-strong active:opacity-95"
                     aria-label="Ver valores, regras e como receber"
-                    onClick={() =>
-                      ga.event("cta_click", { id: "bf_regras_cta", placement: "quiz_result" })
-                    }
+                    onClick={() => {
+                      ga.event("cta_click", { id: "bf_regras_cta", placement: "quiz_result" });
+                      um("cta_click", { id: "bf_regras_cta", placement: "quiz_result" });
+                    }}
                   >
                     Ver valores, regras e como receber
                   </a>
@@ -263,7 +261,10 @@ export const QuizSection = () => {
                         target="_blank"
                         rel="nofollow noopener"
                         className="block break-words rounded-lg border-2 border-border p-4 transition-all hover:border-primary/50"
-                        onClick={() => ga.event("outbound_click", { url: l.url, from: "quiz_result_bf" })}
+                        onClick={() => {
+                          ga.event("outbound_click", { url: l.url, from: "quiz_result_bf" });
+                          um("outbound_click", { url: l.url, from: "quiz_result_bf" });
+                        }}
                       >
                         <div className="font-semibold underline-offset-2 hover:underline">{l.title}</div>
                         {l.desc && <p className="mt-1 text-sm text-muted-foreground">{l.desc}</p>}
@@ -283,7 +284,8 @@ export const QuizSection = () => {
                       setStep(1);
                       setAnswers({});
                       setFirstAnswered(false);
-                      ga.event("quiz_restart", { theme: "bolsa_familia" });
+                      ga.event("quiz_restart", { theme: THEME });
+                      um("quiz_restart", { theme: THEME });
                     }}
                   >
                     Refazer quiz
