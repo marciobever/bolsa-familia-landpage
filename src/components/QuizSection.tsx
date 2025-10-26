@@ -1,43 +1,42 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { ga, observeImpressionById } from "@/lib/analytics";
 
-// ==== Helper mínimo para Umami (sem arquivo extra) ====
+// ==== Umami inline (sem arquivo extra) ====
 declare global {
-  interface Window {
-    umami?: { track: (event: string, data?: Record<string, any>) => void };
-  }
+  interface Window { umami?: { track: (e: string, d?: Record<string, any>) => void }; }
 }
 const um = (event: string, data?: Record<string, any>) => {
-  try {
-    if (typeof window !== "undefined") window.umami?.track?.(event, data);
-  } catch {}
+  try { if (typeof window !== "undefined") window.umami?.track?.(event, data); } catch {}
 };
-// =====================================================
+// ==========================================
 
 const THEME = "bolsa_familia";
 
-// links finais (prioriza Bolsa Família e materiais do seu blog)
 const FINAL_LINKS = [
   {
+    id: "bf_regras",
     title: "Bolsa Família 2025 — benefícios e regras",
     desc: "Quem tem direito, valores por perfil, condicionalidades e como receber.",
     url: "https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/",
   },
   {
+    id: "guia_beneficios",
     title: "Guia de Benefícios Sociais 2025",
     desc: "Panorama dos principais direitos, inscrições e documentos.",
     url: "https://marciobevervanso.com.br/beneficios-sociais-governo-federal-guia-direitos-2025/",
   },
   {
+    id: "mcmv",
     title: "Minha Casa Minha Vida 2025 — faixas e benefícios",
     desc: "Entenda as faixas de renda, regras e como participar.",
     url: "https://marciobevervanso.com.br/minha-casa-minha-vida-2025-comparativo-faixas-beneficios/",
   },
   {
+    id: "cnh_social",
     title: "CNH Social 2025 — regras e comparação",
     desc: "Quem tem direito, diferenças por estado e como participar.",
     url: "https://marciobevervanso.com.br/cnh-gratuita-social-comparativo-regras-2025/",
@@ -52,9 +51,6 @@ export const QuizSection = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showFab, setShowFab] = useState(false);
 
-  const total = 9;
-
-  // Perguntas focadas em Bolsa Família
   const questions = [
     { key: "renda",       text: "Qual é a renda familiar per capita?", options: ["Até R$ 218", "Entre R$ 219 e R$ 660", "Acima de R$ 660"] },
     { key: "cadunico",    text: "Sua família está inscrita no CadÚnico?", options: ["Sim, atualizado (menos de 24 meses)", "Sim, mas desatualizado", "Não sei/Não"] },
@@ -66,24 +62,32 @@ export const QuizSection = () => {
     { key: "ja_recebeu",  text: "Algum membro já recebeu Bolsa Família/Auxílio Brasil?", options: ["Sim", "Não", "Não sei"] },
     { key: "conta",       text: "Possui Caixa Tem ou prefere receber por cartão/banco?", options: ["Tenho Caixa Tem", "Prefiro cartão", "Outra conta/Não sei"] },
   ];
+  const total = questions.length;
 
-  // -------- Analytics base + (se usar ads nesta página) --------
+  // Página aberta
   useEffect(() => {
     ga.event("quiz_gate_view", { page: THEME });
     um("quiz_gate_view", { page: THEME });
 
-    // Se houver blocos de anúncio com id, pode medir impressão:
     observeImpressionById?.("ad-horizontal-topo", "ad_view");
     observeImpressionById?.("ad-quadrado-sidebar", "ad_view");
     observeImpressionById?.("ad-multiplex-final", "ad_view");
   }, []);
 
-  // FAB “voltar ao topo” aparece após scroll (apenas no resultado)
+  // Mostrar FAB quando terminar + rolar
   useEffect(() => {
-    const handleScroll = () => setShowFab(window.scrollY > 600 && finished);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setShowFab(window.scrollY > 600 && finished);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, [finished]);
+
+  // 🔎 LOG CHAVE: toda vez que uma pergunta é exibida
+  useEffect(() => {
+    if (!started || finished) return;
+    const q = questions[step - 1];
+    um("pergunta_exibida", { passo: step, chave: q.key, texto: q.text });
+    ga.event("pergunta_exibida", { passo: step, chave: q.key });
+  }, [started, finished, step]);
 
   const startQuiz = () => {
     setStarted(true);
@@ -92,41 +96,41 @@ export const QuizSection = () => {
     setAnswers({});
     setFirstAnswered(false);
 
-    ga.event("quiz_start", { theme: THEME, via: "start_button" });
-    um("quiz_start", { theme: THEME, via: "start_button" });
+    um("quiz_iniciado", { tema: THEME, via: "botao_iniciar" });
+    ga.event("quiz_iniciado", { tema: THEME, via: "botao_iniciar" });
   };
 
   const selectOption = (option: string) => {
     const q = questions[step - 1];
     setAnswers((prev) => ({ ...prev, [q.key]: option }));
 
-    // primeiro clique da primeira pergunta
     if (!firstAnswered && step === 1) {
-      ga.event("quiz_first_answer", { option });
-      um("quiz_first_answer", { option });
+      um("resposta_escolhida", { passo: step, chave: q.key, opcao: option, primeira_resposta: true });
+      ga.event("resposta_escolhida", { passo: step, chave: q.key, opcao: option, primeira_resposta: true });
       setFirstAnswered(true);
+      return;
     }
 
-    // clique em qualquer opção
-    um("quiz_answer_select", { step, key: q.key, option });
+    // resposta normal
+    um("resposta_escolhida", { passo: step, chave: q.key, opcao: option });
+    ga.event("resposta_escolhida", { passo: step, chave: q.key, opcao: option });
   };
 
   const handleNext = () => {
-    const current = questions[step - 1];
-    if (!answers[current.key]) {
+    const q = questions[step - 1];
+    if (!answers[q.key]) {
       toast.error("Por favor, selecione uma opção");
       return;
     }
 
-    ga.event("quiz_step", { step });
-    um("quiz_step", { step });
-
     if (step < total) {
+      um("avanco_passo", { de: step, para: step + 1 });
+      ga.event("avanco_passo", { de: step, para: step + 1 });
       setStep(step + 1);
     } else {
-      setFinished(true); // sem scroll automático
-      ga.event("quiz_finish", { total_steps: total });
-      um("quiz_finish", { total_steps: total, answers }); // envia o snapshot das respostas
+      setFinished(true);
+      um("quiz_concluido", { total_passos: total, respostas: answers });
+      ga.event("quiz_concluido", { total_passos: total });
       toast.success("Obrigado! Veja as orientações abaixo.");
     }
   };
@@ -143,7 +147,7 @@ export const QuizSection = () => {
           </h2>
 
           <Card className={`p-6 md:p-8 shadow-soft ${finished ? "pb-24" : ""}`}>
-            {/* === Gate/Tela de abertura === */}
+            {/* Gate */}
             {!started && !finished && (
               <div className="space-y-6 text-center">
                 <p className="text-muted-foreground">
@@ -157,12 +161,7 @@ export const QuizSection = () => {
                   <li className="p-3 rounded-md bg-muted">✔️ Links úteis ao final</li>
                 </ul>
                 <div className="flex justify-center">
-                  <Button
-                    size="lg"
-                    variant="hero"
-                    onClick={startQuiz}
-                    aria-label="Iniciar avaliação de elegibilidade"
-                  >
+                  <Button size="lg" variant="hero" onClick={startQuiz} aria-label="Iniciar avaliação de elegibilidade">
                     Iniciar avaliação de elegibilidade
                   </Button>
                 </div>
@@ -172,7 +171,7 @@ export const QuizSection = () => {
               </div>
             )}
 
-            {/* === Fluxo principal do quiz === */}
+            {/* Fluxo */}
             {started && !finished && (
               <>
                 {/* Progresso */}
@@ -182,10 +181,7 @@ export const QuizSection = () => {
                     <span>{progressPct}%</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full transition-all duration-500 bg-gradient-to-r from-primary to-accent"
-                      style={{ width: `${progressPct}%` }}
-                    />
+                    <div className="h-full transition-all duration-500 bg-gradient-to-r from-primary to-accent" style={{ width: `${progressPct}%` }} />
                   </div>
                 </div>
 
@@ -193,7 +189,7 @@ export const QuizSection = () => {
                 <div className="animate-in fade-in duration-300 space-y-4">
                   <h3 className="mb-4 text-xl font-semibold">{questions[step - 1].text}</h3>
                   <div className="space-y-3">
-                    {questions[step - 1].options.map((option) => (
+                    {questions[step - 1].options.map((option, idx) => (
                       <button
                         key={option}
                         onClick={() => selectOption(option)}
@@ -202,6 +198,9 @@ export const QuizSection = () => {
                             ? "border-primary bg-primary/5"
                             : "border-border hover:border-primary/50"
                         }`}
+                        data-quiz-step={step}
+                        data-quiz-key={questions[step - 1].key}
+                        data-quiz-index={idx}
                       >
                         {option}
                       </button>
@@ -211,11 +210,7 @@ export const QuizSection = () => {
 
                 {/* Navegação */}
                 <div className="mt-8 flex justify-between">
-                  <Button
-                    variant="outline"
-                    onClick={() => setStep(Math.max(1, step - 1))}
-                    disabled={step === 1}
-                  >
+                  <Button variant="outline" onClick={() => setStep(Math.max(1, step - 1))} disabled={step === 1}>
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Voltar
                   </Button>
@@ -227,19 +222,19 @@ export const QuizSection = () => {
               </>
             )}
 
-            {/* === Tela final === */}
+            {/* Resultado */}
             {finished && (
               <>
                 <div className="mb-6 flex justify-center">
                   <a
-                    href="https://marciobevervanso.com.br/bolsa-familia-comparativo-beneficios-regras/"
+                    href={FINAL_LINKS[0].url}
                     target="_blank"
                     rel="nofollow noopener"
                     className="btn-hero w-full sm:w-auto px-6 py-4 text-center text-base sm:text-lg shadow-strong hover:shadow-strong active:opacity-95"
                     aria-label="Ver valores, regras e como receber"
                     onClick={() => {
-                      ga.event("cta_click", { id: "bf_regras_cta", placement: "quiz_result" });
-                      um("cta_click", { id: "bf_regras_cta", placement: "quiz_result" });
+                      ga.event("link_final_clique", { id: FINAL_LINKS[0].id, posicao: 0 });
+                      um("link_final_clique", { id: FINAL_LINKS[0].id, titulo: FINAL_LINKS[0].title, url: FINAL_LINKS[0].url, posicao: 0 });
                     }}
                   >
                     Ver valores, regras e como receber
@@ -252,18 +247,17 @@ export const QuizSection = () => {
                   pagamentos pelo <strong>Caixa Tem</strong> ou cartão. Veja também:
                 </p>
 
-                {/* Links úteis (cards clicáveis inteiros) */}
                 <ul className="grid gap-3">
-                  {FINAL_LINKS.map((l) => (
-                    <li key={l.url}>
+                  {FINAL_LINKS.map((l, i) => (
+                    <li key={l.id}>
                       <a
                         href={l.url}
                         target="_blank"
                         rel="nofollow noopener"
                         className="block break-words rounded-lg border-2 border-border p-4 transition-all hover:border-primary/50"
                         onClick={() => {
-                          ga.event("outbound_click", { url: l.url, from: "quiz_result_bf" });
-                          um("outbound_click", { url: l.url, from: "quiz_result_bf" });
+                          ga.event("link_final_clique", { id: l.id, posicao: i });
+                          um("link_final_clique", { id: l.id, titulo: l.title, url: l.url, posicao: i });
                         }}
                       >
                         <div className="font-semibold underline-offset-2 hover:underline">{l.title}</div>
@@ -273,19 +267,18 @@ export const QuizSection = () => {
                   ))}
                 </ul>
 
-                {/* Ações finais */}
                 <div className="mt-8 flex flex-col justify-end gap-3 sm:flex-row">
                   <Button
                     variant="outline"
                     size="lg"
                     onClick={() => {
                       setFinished(false);
-                      setStarted(false); // volta para a tela de abertura
+                      setStarted(false);
                       setStep(1);
                       setAnswers({});
                       setFirstAnswered(false);
-                      ga.event("quiz_restart", { theme: THEME });
-                      um("quiz_restart", { theme: THEME });
+                      um("quiz_reiniciado", { tema: THEME });
+                      ga.event("quiz_reiniciado", { tema: THEME });
                     }}
                   >
                     Refazer quiz
@@ -300,7 +293,6 @@ export const QuizSection = () => {
         </div>
       </div>
 
-      {/* FAB flutuante “Topo” */}
       {showFab && (
         <button
           onClick={goTop}
